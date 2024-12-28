@@ -1,18 +1,46 @@
 export const NAV_THEME = {
   light: {
-    background: 'hsl(96 100% 95%)', // from --background
-    border: 'hsl(96 30% 50%)', // from --border
-    card: 'hsl(96 50% 90%)', // from --card
-    notification: 'hsl(0 100% 30%)', // from --destructive
-    primary: 'hsl(96 45% 27%)', // from --primary
-    text: 'hsl(96 5% 10%)', // from --foreground
+    background: 'hsl(179, 100%, 95%)',
+    foreground: 'hsl(179, 5%, 10%)',
+    card: 'hsl(179, 50%, 90%)',
+    cardForeground: 'hsl(179, 5%, 15%)',
+    popover: 'hsl(179, 100%, 95%)',
+    popoverForeground: 'hsl(179, 100%, 10%)',
+    primary: 'hsl(179, 45%, 27%)',
+    primaryForeground: 'hsl(0, 0%, 100%)',
+    secondary: 'hsl(179, 30%, 70%)',
+    secondaryForeground: 'hsl(0, 0%, 0%)',
+    muted: 'hsl(141, 30%, 85%)',
+    mutedForeground: 'hsl(179, 5%, 35%)',
+    accent: 'hsl(141, 30%, 80%)',
+    accentForeground: 'hsl(179, 5%, 15%)',
+    destructive: 'hsl(0, 100%, 30%)',
+    destructiveForeground: 'hsl(179, 5%, 90%)',
+    border: 'hsl(179, 30%, 50%)',
+    input: 'hsl(179, 30%, 26%)',
+    ring: 'hsl(179, 45%, 27%)',
+    radius: '0.75rem',
   },
   dark: {
-    background: 'hsl(96 50% 10%)', // from dark --background
-    border: 'hsl(96 30% 26%)', // from --input
-    card: 'hsl(96 50% 10%)', // from dark --card
-    notification: 'hsl(0 100% 30%)', // from --destructive
-    primary: 'hsl(96 45% 27%)', // from dark --primary
-    text: 'hsl(96 5% 90%)', // from dark --foreground
+    background: 'hsl(179, 50%, 10%)',
+    foreground: 'hsl(179, 5%, 90%)',
+    card: 'hsl(179, 50%, 10%)',
+    cardForeground: 'hsl(179, 5%, 90%)',
+    popover: 'hsl(179, 50%, 5%)',
+    popoverForeground: 'hsl(179, 5%, 90%)',
+    primary: 'hsl(179, 45%, 27%)',
+    primaryForeground: 'hsl(0, 0%, 100%)',
+    secondary: 'hsl(179, 30%, 20%)',
+    secondaryForeground: 'hsl(0, 0%, 100%)',
+    muted: 'hsl(141, 30%, 25%)',
+    mutedForeground: 'hsl(179, 5%, 60%)',
+    accent: 'hsl(141, 30%, 25%)',
+    accentForeground: 'hsl(179, 5%, 90%)',
+    destructive: 'hsl(0, 100%, 30%)',
+    destructiveForeground: 'hsl(179, 5%, 90%)',
+    border: 'hsl(179, 30%, 26%)',
+    input: 'hsl(179, 30%, 26%)',
+    ring: 'hsl(179, 45%, 27%)',
+    radius: '0.75rem',
   },
 };
