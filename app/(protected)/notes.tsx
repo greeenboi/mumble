@@ -1,5 +1,5 @@
 import { Container } from '~/components/Container';
-import { ScreenContent } from '~/components/ScreenContent';
+import { H1 } from '~/components/ui/typography';
 import { useUser } from '~/hooks/useUser';
 
 export default function Details() {
@@ -7,7 +7,7 @@ export default function Details() {
 
   return (
     <Container>
-      <ScreenContent path="screens/details.tsx" title={`Showing details for user ${email}`} />
+      <H1>Details</H1>
     </Container>
   );
 }
