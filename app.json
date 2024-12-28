@@ -3,7 +3,6 @@
     "name": "mumble",
     "slug": "mumble",
     "version": "1.0.0",
-
     "scheme": "mumble",
     "web": {
       "bundler": "metro",
@@ -19,17 +18,14 @@
         }
       ]
     ],
+    "newArchEnabled": true,
     "experiments": {
       "typedRoutes": true,
-
       "tsconfigPaths": true
     },
-
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-
     "userInterfaceStyle": "light",
-
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -44,6 +40,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "bf15aac2-fdd5-4cfd-8096-e91bd4f37f3e"
+      }
+    },
+    "owner": "greenarcade"
   }
 }
