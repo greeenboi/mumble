@@ -10,10 +10,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { isAuthenticated, user, session } = useUser();
 
+  // Debug logging
   useEffect(() => {
     console.log('[Auth State]', { isAuthenticated, user, session });
   }, [isAuthenticated, user, session]);
 
+  // Session management
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('[Initial Session]', session);
@@ -30,22 +32,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Navigation protection
   useEffect(() => {
     const inAuthGroup = segments[0] === '(auth)';
     const inProtectedGroup = segments[0] === '(protected)';
 
     console.log('[Navigation]', {
+      segments,
       inAuthGroup,
       inProtectedGroup,
       isAuthenticated,
     });
 
-    if (!isAuthenticated && inProtectedGroup) {
+    if (!session && inProtectedGroup) {
+      // If not authenticated and trying to access protected routes
       router.replace('/(auth)/sign-in');
-    } else if (isAuthenticated && inAuthGroup) {
+    } else if (session && inAuthGroup) {
+      // If authenticated and trying to access auth routes
       router.replace('/(protected)/notes');
     }
-  }, [isAuthenticated, segments]);
+  }, [session, segments]);
 
   return <>{children}</>;
 }

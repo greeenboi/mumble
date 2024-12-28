@@ -33,7 +33,14 @@ const LIGHT_THEME: Theme = {
       fontWeight: '800',
     },
   },
-  colors: NAV_THEME.light,
+  colors: {
+    background: NAV_THEME.light.background,
+    border: NAV_THEME.light.border,
+    card: NAV_THEME.light.card,
+    notification: NAV_THEME.light.accent,
+    primary: NAV_THEME.light.primary,
+    text: NAV_THEME.light.foreground,
+  },
 };
 const DARK_THEME: Theme = {
   dark: true,
@@ -55,7 +62,14 @@ const DARK_THEME: Theme = {
       fontWeight: '800',
     },
   },
-  colors: NAV_THEME.dark,
+  colors: {
+    background: NAV_THEME.dark.background,
+    border: NAV_THEME.dark.border,
+    card: NAV_THEME.dark.card,
+    notification: NAV_THEME.dark.accent,
+    primary: NAV_THEME.dark.primary,
+    text: NAV_THEME.dark.foreground,
+  },
 };
 
 export {

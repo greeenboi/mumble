@@ -21,6 +21,7 @@
     "@rn-primitives/alert-dialog": "^1.1.0",
     "@rn-primitives/label": "^1.1.0",
     "@rn-primitives/slot": "^1.1.0",
+    "@rn-primitives/switch": "^1.1.0",
     "@rn-primitives/types": "^1.1.0",
     "@supabase/supabase-js": "^2.38.4",
     "class-variance-authority": "^0.7.1",
