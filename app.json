@@ -16,7 +16,9 @@
         {
           "launchMode": "most-recent"
         }
-      ]
+      ],
+      "expo-audio",
+      "expo-sqlite"
     ],
     "newArchEnabled": true,
     "experiments": {
@@ -31,7 +33,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
