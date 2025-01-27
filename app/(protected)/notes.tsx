@@ -1,13 +1,17 @@
+import React from 'react';
+import { View } from 'react-native';
+
 import { Container } from '~/components/Container';
+import { RecordingCard } from '~/components/audio/RecordingCard';
 import { H1 } from '~/components/ui/typography';
-import { useUser } from '~/hooks/useUser';
 
-export default function Details() {
-  const { email } = useUser();
-
+export default function Notes() {
   return (
     <Container>
-      <H1>Details</H1>
+      <H1 className="mb-6">Voice Notes</H1>
+      <View className="w-full">
+        <RecordingCard />
+      </View>
     </Container>
   );
 }

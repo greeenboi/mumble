@@ -1,4 +1,5 @@
 import '~/global.css';
+import 'expo-dev-client';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Theme, ThemeProvider } from '@react-navigation/native';

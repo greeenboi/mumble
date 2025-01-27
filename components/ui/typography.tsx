@@ -13,7 +13,7 @@ const H1 = React.forwardRef<TextRef, SlottableTextProps>(
         role="heading"
         aria-level="1"
         className={cn(
-          'text-foreground text-4xl font-extrabold tracking-tight web:select-text web:scroll-m-20 lg:text-5xl',
+          'text-4xl font-extrabold tracking-tight text-foreground web:select-text web:scroll-m-20 lg:text-5xl',
           className
         )}
         ref={ref}

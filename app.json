@@ -17,7 +17,12 @@
           "launchMode": "most-recent"
         }
       ],
-      "expo-audio",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ],
       "expo-sqlite"
     ],
     "newArchEnabled": true,
@@ -43,7 +48,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.greenarcade.mumble"
     },
     "extra": {
       "eas": {

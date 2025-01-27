@@ -17,7 +17,7 @@ export default function AuthTabsLayout() {
         name="sign-in"
         options={{
           headerShown: false,
-          animation: 'shift',
+          animation: 'none',
           title: 'Sign In',
           tabBarIcon: ({ color }) => <LogIn size={24} color={color} />,
         }}
@@ -26,7 +26,7 @@ export default function AuthTabsLayout() {
         name="sign-up"
         options={{
           headerShown: false,
-          animation: 'shift',
+          animation: 'none',
           title: 'Sign Up',
           tabBarIcon: ({ color }) => <UserPlus size={24} color={color} />,
         }}
