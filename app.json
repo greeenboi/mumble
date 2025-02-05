@@ -17,12 +17,12 @@
           "launchMode": "most-recent"
         }
       ],
-      [
-        "expo-audio",
-        {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
-        }
-      ],
+      // [
+      //   "expo-audio",
+      //   {
+      //     "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+      //   }
+      // ],
       "expo-sqlite"
     ],
     "newArchEnabled": true,
