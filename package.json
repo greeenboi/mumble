@@ -27,7 +27,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "expo": "^52.0.23",
-    "expo-audio": "~0.3.1",
     "expo-blur": "~14.0.1",
     "expo-constants": "~17.0.3",
     "expo-dev-client": "~5.0.7",
