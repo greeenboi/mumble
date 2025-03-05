@@ -46,7 +46,7 @@ export default function ProtectedLayout() {
           </View>
         ),
       }}>
-      <Tabs.Screen name="notes" />
+      <Tabs.Screen name="notes" options={ } />
       <Tabs.Screen name="settings" options={{ animation: 'fade', href: null }} />
     </Tabs>
   );
