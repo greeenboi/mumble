@@ -124,6 +124,7 @@ export default function RootLayout() {
             options={{ headerShown: false, presentation: 'containedModal' }}
           />
           <Stack.Screen name="(protected)" options={{ headerShown: false }} />
+          <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack>
         <PortalHost />
       </ThemeProvider>
