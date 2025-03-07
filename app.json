@@ -17,13 +17,8 @@
           "launchMode": "most-recent"
         }
       ],
-      // [
-      //   "expo-audio",
-      //   {
-      //     "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
-      //   }
-      // ],
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-audio"
     ],
     "newArchEnabled": true,
     "experiments": {
@@ -38,7 +33,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },

@@ -44,8 +44,8 @@ export default function ProtectedLayout() {
           </View>
         ),
       }}>
-      <Tabs.Screen name="notes" options={{ href: '/notes' }}/>
-      <Tabs.Screen name="settings" options={{ href: '/settings', animation: 'fade' }}/>
+      <Tabs.Screen name="notes" options={{ href: '/notes' }} />
+      <Tabs.Screen name="settings" options={{ href: '/settings', animation: 'fade' }} />
     </Tabs>
   );
 }
