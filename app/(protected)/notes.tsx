@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { useAudioRecorder, RecordingPresets, AudioModule, useAudioPlayer } from 'expo-audio';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 
 import { Container } from '~/components/Container';
@@ -17,62 +17,150 @@ interface VoiceNote {
 export default function Notes() {
   const [voiceNotes, setVoiceNotes] = useState<VoiceNote[]>([]);
   const [activeNote, setActiveNote] = useState<string | null>(null);
+  const [recordingState, setRecordingState] = useState('idle');
+  const [error, setError] = useState<string | null>(null);
+  const [isRecordingActive, setIsRecordingActive] = useState(false);
+
+  // Store recorder status in a ref to avoid recreation issues
+  const recorderRef = useRef(null);
+
+  // We'll initialize the recorder only once and keep it throughout the component's lifecycle
+  // Using useMemo to ensure the recorder is only created once
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
 
-  // Create a single audio player instance at the component level
+  // Same for the player - create it once and keep the reference stable
   const audioPlayer = useAudioPlayer();
 
-  // Request microphone permissions
-  useEffect(() => {
-    (async () => {
-      const status = await AudioModule.requestRecordingPermissionsAsync();
-      if (!status.granted) {
-        Alert.alert('Permission denied', 'Access to microphone is required to record voice notes.');
-      }
-    })();
-  }, []);
+  // Store permitted state to avoid checking permissions multiple times
+  const [permissionGranted, setPermissionGranted] = useState(false);
 
-  // Clean up player when component unmounts
+  // Debug recorder state changes
   useEffect(() => {
-    return () => {
-      if (audioPlayer) {
-        audioPlayer.remove();
+    console.log('[DEBUG] Recorder state:', {
+      isRecording: audioRecorder?.isRecording,
+      uri: audioRecorder?.uri,
+      currentTime: audioRecorder?.currentTime,
+    });
+  }, [audioRecorder?.isRecording, audioRecorder?.uri, audioRecorder?.currentTime]);
+
+  // Request microphone permissions only once
+  useEffect(() => {
+    let isMounted = true;
+
+    const requestPermissions = async () => {
+      try {
+        console.log('[DEBUG] Requesting microphone permissions...');
+        const status = await AudioModule.requestRecordingPermissionsAsync();
+        console.log('[DEBUG] Permission result:', status);
+
+        if (!isMounted) return;
+
+        if (status.granted) {
+          setPermissionGranted(true);
+        } else {
+          Alert.alert(
+            'Permission denied',
+            'Access to microphone is required to record voice notes.'
+          );
+        }
+      } catch (err) {
+        console.error('[ERROR] Permission error:', err);
+        if (isMounted) {
+          setError('Failed to request microphone permissions');
+          Alert.alert('Error', 'Failed to request microphone permissions');
+        }
       }
     };
-  }, [audioPlayer]);
 
-  // Setup playback ended listener
+    requestPermissions();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Handle playback ended
   useEffect(() => {
-    const onPlaybackEnded = () => {
-      if (activeNote) {
+    if (!audioPlayer) return;
+
+    const handlePlaybackEnded = () => {
+      if (!audioPlayer.playing && activeNote) {
         setActiveNote(null);
       }
     };
 
-    audioPlayer.addListener('playbackStatusUpdate', onPlaybackEnded);
+    // Poll for playback status instead of using potentially problematic event listeners
+    const intervalId = setInterval(() => {
+      handlePlaybackEnded();
+    }, 500);
 
     return () => {
-      audioPlayer.removeListener('playbackStatusUpdate', onPlaybackEnded);
+      clearInterval(intervalId);
     };
   }, [audioPlayer, activeNote]);
 
-  // Handle recording
-  const startRecording = async () => {
+  // Handle recording with debug logs and error protection
+  const startRecording = useCallback(async () => {
+    if (!audioRecorder || !permissionGranted) {
+      console.error('[ERROR] Cannot record: recorder not initialized or permissions not granted');
+      return;
+    }
+
     try {
-      await audioRecorder.prepareToRecordAsync();
-      audioRecorder.record();
+      console.log('[DEBUG] Starting recording...');
+      setRecordingState('preparing');
+      setIsRecordingActive(true);
+      setError(null);
+
+      // Initialize the recorder with proper error handling
+      try {
+        await audioRecorder.prepareToRecordAsync();
+        console.log('[DEBUG] Recorder prepared successfully');
+      } catch (prepareError) {
+        console.error('[ERROR] Failed to prepare recorder:', prepareError);
+        throw new Error('Failed to prepare recorder');
+      }
+
+      setRecordingState('recording');
+
+      try {
+        await audioRecorder.record();
+        console.log('[DEBUG] Recording started successfully');
+      } catch (recordError) {
+        console.error('[ERROR] Failed to start recording:', recordError);
+        throw new Error('Failed to start recording');
+      }
     } catch (error) {
-      console.error('Failed to start recording:', error);
+      console.error('[ERROR] Recording process failed:', error);
+      setRecordingState('error');
+      setIsRecordingActive(false);
+      setError(`Recording error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       Alert.alert('Recording Error', 'Could not start recording.');
     }
-  };
+  }, [audioRecorder, permissionGranted]);
 
-  const stopRecording = async () => {
+  const stopRecording = useCallback(async () => {
+    if (!audioRecorder) {
+      console.error('[ERROR] Cannot stop recording: recorder not initialized');
+      setIsRecordingActive(false);
+      return;
+    }
+
     try {
+      console.log('[DEBUG] Stopping recording...');
+      setRecordingState('stopping');
+
       await audioRecorder.stop();
+      console.log('[DEBUG] Recording stopped');
+
+      setRecordingState('idle');
+      setIsRecordingActive(false);
 
       if (audioRecorder.uri) {
-        const newNote: VoiceNote = {
+        console.log('[DEBUG] Recording URI:', audioRecorder.uri);
+        console.log('[DEBUG] Recording duration:', audioRecorder.currentTime);
+
+        const newNote = {
           id: Date.now().toString(),
           uri: audioRecorder.uri,
           createdAt: new Date(),
@@ -80,23 +168,51 @@ export default function Notes() {
         };
 
         setVoiceNotes((prev) => [newNote, ...prev]);
+      } else {
+        console.warn('[WARNING] No URI returned after recording stopped');
       }
     } catch (error) {
-      console.error('Failed to stop recording:', error);
+      console.error('[ERROR] Failed to stop recording:', error);
+      setRecordingState('error');
+      setIsRecordingActive(false);
+      setError(`Stop recording error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       Alert.alert('Recording Error', 'Could not save recording.');
     }
-  };
+  }, [audioRecorder]);
 
-  // Handle playback with the AudioPlayer
+  // Safer playback implementation
   const playVoiceNote = useCallback(
     async (uri: string, id: string) => {
+      if (!audioPlayer) {
+        console.error('[ERROR] Cannot play: player not initialized');
+        return;
+      }
+
       try {
-        await audioPlayer.remove();
-        await audioPlayer.replace(uri);
-        await audioPlayer.play();
-        setActiveNote(id);
+        console.log('[DEBUG] Playing audio:', uri);
+
+        // First pause any currently playing audio
+        try {
+          if (audioPlayer.playing) {
+            await audioPlayer.pause();
+          }
+        } catch (pauseError) {
+          console.warn('[WARNING] Error pausing previous playback:', pauseError);
+          // Continue even if pause fails
+        }
+
+        // Then load and play new audio
+        try {
+          await audioPlayer.replace(uri);
+          await audioPlayer.play();
+          setActiveNote(id);
+          console.log('[DEBUG] Playback started successfully');
+        } catch (playError) {
+          console.error('[ERROR] Failed to play audio:', playError);
+          throw new Error('Failed to play audio');
+        }
       } catch (error) {
-        console.error('Failed to play audio:', error);
+        console.error('[ERROR] Playback process failed:', error);
         Alert.alert('Playback Error', 'Could not play the recording.');
       }
     },
@@ -104,11 +220,14 @@ export default function Notes() {
   );
 
   const stopPlayback = useCallback(async () => {
+    if (!audioPlayer) return;
+
     try {
       await audioPlayer.pause();
       setActiveNote(null);
+      console.log('[DEBUG] Playback stopped successfully');
     } catch (error) {
-      console.error('Failed to stop playback:', error);
+      console.error('[ERROR] Failed to stop playback:', error);
     }
   }, [audioPlayer]);
 
@@ -184,21 +303,60 @@ export default function Notes() {
     <Container>
       <H1 className="mb-6">Voice Notes</H1>
 
+      {/* Debug info section */}
+      {__DEV__ && (
+        <View className="mb-4 rounded-md bg-gray-800 p-2">
+          <Text className="text-xs text-white">Debug Info:</Text>
+          <Text className="text-xs text-gray-300">Recording State: {recordingState}</Text>
+          <Text className="text-xs text-gray-300">
+            Recorder Status: {isRecordingActive ? 'Active' : 'Inactive'}
+          </Text>
+          <Text className="text-xs text-gray-300">
+            Permissions: {permissionGranted ? 'Granted' : 'Not granted'}
+          </Text>
+          {error && <Text className="text-xs text-red-400">Error: {error}</Text>}
+        </View>
+      )}
+
       <View className="w-full flex-1">
         {/* Recording interface */}
         <View className="mb-8 items-center">
           <TouchableOpacity
-            onPress={audioRecorder.isRecording ? stopRecording : startRecording}
+            disabled={!permissionGranted}
+            onPress={() => {
+              console.log('[DEBUG] Record button pressed', {
+                currentState: isRecordingActive ? 'recording' : 'not recording',
+              });
+              if (isRecordingActive) {
+                stopRecording();
+              } else {
+                startRecording();
+              }
+            }}
             className={`flex h-16 w-16 items-center justify-center rounded-full ${
-              audioRecorder.isRecording ? 'animate-pulse bg-red-600' : 'bg-indigo-600'
+              !permissionGranted
+                ? 'bg-gray-600'
+                : isRecordingActive || recordingState === 'recording'
+                  ? 'animate-pulse bg-red-600'
+                  : 'bg-indigo-600'
             }`}>
-            <Ionicons name={audioRecorder.isRecording ? 'stop' : 'mic'} size={24} color="white" />
+            <Ionicons
+              name={isRecordingActive || recordingState === 'recording' ? 'stop' : 'mic'}
+              size={24}
+              color="white"
+            />
           </TouchableOpacity>
           <Text className="mt-2 text-gray-400">
-            {audioRecorder.isRecording ? 'Recording...' : 'Tap to Record'}
+            {!permissionGranted
+              ? 'Microphone access required'
+              : isRecordingActive || recordingState === 'recording'
+                ? 'Recording...'
+                : recordingState === 'preparing'
+                  ? 'Preparing...'
+                  : 'Tap to Record'}
           </Text>
 
-          {audioRecorder.isRecording && (
+          {(isRecordingActive || recordingState === 'recording') && (
             <View className="mt-2 h-1 w-32 overflow-hidden rounded-full bg-gray-800">
               <View className="h-full animate-pulse bg-red-500" style={{ width: '60%' }} />
             </View>
