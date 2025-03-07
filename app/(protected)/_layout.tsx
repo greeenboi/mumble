@@ -1,11 +1,9 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter, Tabs } from 'expo-router';
 import { View } from 'react-native';
 
 import { Button } from '~/components/ui/button';
 import { NAV_THEME } from '~/lib/constants';
-import { MoonStar } from '~/lib/icons/Moon';
-import { Settings } from '~/lib/icons/Settings';
-import { Sun } from '~/lib/icons/Sun';
 import { useColorScheme } from '~/lib/useColorScheme';
 
 export default function ProtectedLayout() {
@@ -31,9 +29,9 @@ export default function ProtectedLayout() {
               onPress={toggleColorScheme}
               className="h-9 w-9 rounded-md">
               {isDarkColorScheme ? (
-                <MoonStar className="h-4 w-4 text-foreground" />
+                <Ionicons name="moon" className="h-4 w-4 text-foreground" />
               ) : (
-                <Sun className="h-4 w-4 text-foreground" />
+                <Ionicons name="sunny" className="h-4 w-4 text-foreground" />
               )}
             </Button>
             <Button
@@ -41,13 +39,13 @@ export default function ProtectedLayout() {
               size="icon"
               onPress={() => router.push('/settings')}
               className="h-9 w-9 rounded-md">
-              <Settings className="h-4 w-4 text-foreground" />
+              <Ionicons name="settings" className="h-4 w-4 text-foreground" />
             </Button>
           </View>
         ),
       }}>
-      <Tabs.Screen name="notes" options={ } />
-      <Tabs.Screen name="settings" options={{ animation: 'fade', href: null }} />
+      <Tabs.Screen name="notes" options={{ href: '/notes' }}/>
+      <Tabs.Screen name="settings" options={{ href: '/settings', animation: 'fade' }}/>
     </Tabs>
   );
 }

@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.replace('/(auth)/sign-in');
     } else if (session && inAuthGroup) {
       // If authenticated and trying to access auth routes
-      router.replace('/(protected)/notes');
+      router.replace('/notes');
     }
   }, [session, segments]);
 

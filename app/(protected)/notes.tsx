@@ -9,9 +9,7 @@ export default function Notes() {
   return (
     <Container>
       <H1 className="mb-6">Voice Notes</H1>
-      <View className="w-full">
-        {/* <RecordingCard /> */}
-      </View>
+      <View className="w-full">{/* <RecordingCard /> */}</View>
     </Container>
   );
 }

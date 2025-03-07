@@ -1,5 +1,5 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
-import { LogIn, UserPlus } from 'lucide-react-native';
 
 export default function AuthTabsLayout() {
   return (
@@ -19,7 +19,7 @@ export default function AuthTabsLayout() {
           headerShown: false,
           animation: 'none',
           title: 'Sign In',
-          tabBarIcon: ({ color }) => <LogIn size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="log-in" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -28,7 +28,7 @@ export default function AuthTabsLayout() {
           headerShown: false,
           animation: 'none',
           title: 'Sign Up',
-          tabBarIcon: ({ color }) => <UserPlus size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="person-add" size={24} color={color} />,
         }}
       />
     </Tabs>
