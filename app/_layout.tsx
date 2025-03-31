@@ -1,39 +1,28 @@
-import '~/global.css';
+import '@/global.css';
 import 'expo-dev-client';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Theme, ThemeProvider } from '@react-navigation/native';
 import { PortalHost } from '@rn-primitives/portal';
-import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Platform } from 'react-native';
 
 import { AuthProvider } from '../providers/AuthProvider';
 
-import { NAV_THEME } from '~/lib/constants';
-import { useColorScheme } from '~/lib/useColorScheme';
+import { NAV_THEME } from '@/lib/constants';
+
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { type Theme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import 'react-native-reanimated';
+
+import { useColorScheme } from '@/lib/useColorScheme';
 
 const LIGHT_THEME: Theme = {
   dark: false,
-  fonts: {
-    regular: {
-      fontFamily: 'Inter_400Regular',
-      fontWeight: '400',
-    },
-    medium: {
-      fontFamily: 'Inter_500Medium',
-      fontWeight: '500',
-    },
-    bold: {
-      fontFamily: 'Inter_700Bold',
-      fontWeight: '700',
-    },
-    heavy: {
-      fontFamily: 'Inter_800Heavy',
-      fontWeight: '800',
-    },
-  },
   colors: {
     background: NAV_THEME.light.background,
     border: NAV_THEME.light.border,
@@ -45,24 +34,6 @@ const LIGHT_THEME: Theme = {
 };
 const DARK_THEME: Theme = {
   dark: true,
-  fonts: {
-    regular: {
-      fontFamily: 'Inter_400Regular',
-      fontWeight: '400',
-    },
-    medium: {
-      fontFamily: 'Inter_500Medium',
-      fontWeight: '500',
-    },
-    bold: {
-      fontFamily: 'Inter_700Bold',
-      fontWeight: '700',
-    },
-    heavy: {
-      fontFamily: 'Inter_800Heavy',
-      fontWeight: '800',
-    },
-  },
   colors: {
     background: NAV_THEME.dark.background,
     border: NAV_THEME.dark.border,
@@ -78,18 +49,32 @@ export {
   ErrorBoundary,
 } from 'expo-router';
 
-// Prevent the splash screen from auto-hiding before getting the color scheme.
+export const unstable_settings = {
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: '(auth)',
+};
+
+// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
+  const [loaded, error] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    ...FontAwesome.font,
+  });
+  const { colorScheme, setColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
-  React.useEffect(() => {
+  // Effect for handling errors
+  useEffect(() => {
+    if (error) throw error;
+  }, [error]);
+
+  // Effect for handling theme loading
+  useEffect(() => {
     (async () => {
       const theme = await AsyncStorage.getItem('theme');
       if (Platform.OS === 'web') {
-        // Adds the background color to the html element to prevent white background on overscroll.
         document.documentElement.classList.add('bg-background');
       }
       if (!theme) {
@@ -100,34 +85,45 @@ export default function RootLayout() {
       const colorTheme = theme === 'dark' ? 'dark' : 'light';
       if (colorTheme !== colorScheme) {
         setColorScheme(colorTheme);
-
-        setIsColorSchemeLoaded(true);
-        return;
       }
       setIsColorSchemeLoaded(true);
     })().finally(() => {
       SplashScreen.hideAsync();
     });
-  }, []);
+  }, [colorScheme, setColorScheme]);
 
-  if (!isColorSchemeLoaded) {
+  // Effect for handling font loading
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  // Combined loading check
+  if (!loaded || !isColorSchemeLoaded) {
     return null;
   }
 
+  return <RootLayoutNav />;
+}
+
+function RootLayoutNav() {
+  const { colorScheme } = useColorScheme();
+
   return (
     <AuthProvider>
-      <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+      <ThemeProvider value={colorScheme === 'dark' ? DARK_THEME : LIGHT_THEME}>
+        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
         <Stack initialRouteName="(auth)">
           <Stack.Screen
             name="(auth)"
             options={{ headerShown: false, presentation: 'containedModal' }}
           />
           <Stack.Screen name="(protected)" options={{ headerShown: false }} />
-          <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack>
         <PortalHost />
       </ThemeProvider>
     </AuthProvider>
   );
 }
+

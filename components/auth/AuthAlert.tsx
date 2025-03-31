@@ -8,9 +8,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '~/components/ui/alert-dialog';
-import { Text } from '~/components/ui/text';
-import { useStore } from '~/store/store';
+} from '@/components/ui/alert-dialog';
+import { Text } from '@/components/ui/text';
+import { useStore } from '@/store/store';
 
 export function AuthAlert() {
   const [open, setOpen] = useState(false);

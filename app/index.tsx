@@ -1,10 +1,10 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Link } from 'expo-router';
 
-import { Container } from '~/components/Container';
-import { ScreenContent } from '~/components/ScreenContent';
-import { Button } from '~/components/ui/button';
-import { Text } from '~/components/ui/text';
+import { Container } from '@/components/Container';
+import { ScreenContent } from '@/components/ScreenContent';
+import { Button } from '@/components/ui/button';
+import { Text } from '@/components/ui/text';
 
 export default function IndexUnusedPage() {
   return (

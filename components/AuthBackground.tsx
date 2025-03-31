@@ -3,8 +3,8 @@ import { View } from 'react-native';
 
 import BearLogo from './logos/bear-logo';
 
-import { useColorScheme } from '~/lib/useColorScheme';
-import { cn } from '~/lib/utils';
+import { useColorScheme } from '@/lib/useColorScheme';
+import { cn } from '@/lib/utils';
 
 export function AuthBackground() {
   const { theme } = useColorScheme();

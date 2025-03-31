@@ -2,9 +2,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter, Tabs } from 'expo-router';
 import { View } from 'react-native';
 
-import { Button } from '~/components/ui/button';
-import { NAV_THEME } from '~/lib/constants';
-import { useColorScheme } from '~/lib/useColorScheme';
+import { Button } from '@/components/ui/button';
+import { NAV_THEME } from '@/lib/constants';
+import { useColorScheme } from '@/lib/useColorScheme';
 
 export default function ProtectedLayout() {
   const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
@@ -45,7 +45,7 @@ export default function ProtectedLayout() {
         ),
       }}>
       <Tabs.Screen name="notes" options={{ href: '/notes' }} />
-      <Tabs.Screen name="settings" options={{ href: '/settings', animation: 'fade' }} />
+      <Tabs.Screen name="settings" options={{ href: '/settings' }} />
     </Tabs>
   );
 }

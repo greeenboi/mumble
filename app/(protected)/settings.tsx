@@ -1,10 +1,10 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import { Container } from '~/components/Container';
-import { Button } from '~/components/ui/button';
-import { Text } from '~/components/ui/text';
-import { UseSignOut } from '~/hooks/useSignOut';
-import { useUser } from '~/hooks/useUser';
+import { Container } from '@/components/Container';
+import { Button } from '@/components/ui/button';
+import { Text } from '@/components/ui/text';
+import { UseSignOut } from '@/hooks/useSignOut';
+import { useUser } from '@/hooks/useUser';
 
 export default function Settings() {
   const { email, isAuthenticated, user } = useUser();
